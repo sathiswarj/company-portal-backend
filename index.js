@@ -9,7 +9,6 @@ const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const leadRoutes = require('./src/routes/leadRoutes');
 const companyRoutes = require('./src/routes/companyRoutes');
 const taskRoutes = require('./src/routes/taskRoutes');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
