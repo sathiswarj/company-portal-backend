@@ -2,23 +2,19 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const connectDB = require('./config/db');
-const seedAdmin = require('./config/seedAdmin');
-
+const connectDB = require('./src/config/db');
 // Route Imports
-const authRoutes = require('./routes/authRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-const leadRoutes = require('./routes/leadRoutes');
-const companyRoutes = require('./routes/companyRoutes');
-const taskRoutes = require('./routes/taskRoutes');
+const authRoutes = require('./src/routes/authRoutes');
+const dashboardRoutes = require('./src/routes/dashboardRoutes');
+const leadRoutes = require('./src/routes/leadRoutes');
+const companyRoutes = require('./src/routes/companyRoutes');
+const taskRoutes = require('./src/routes/taskRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to Database & auto-seed mock/default data
-connectDB().then(() => {
-  seedAdmin();
-});
+connectDB();
 
 // Middlewares
 app.use(cors({
