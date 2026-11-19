@@ -13,7 +13,7 @@ const getTasks = async (req, res) => {
 // 2. Create Task
 const createTask = async (req, res) => {
   try {
-    const { title, lead, dueDate, assignedTo } = req.body;
+    const { title, lead, leadId, dueDate, assignedTo } = req.body;
     if (!title || !lead || !dueDate || !assignedTo) {
       return res.status(400).json({ success: false, message: 'Title, lead, due date, and assigned user are required.' });
     }
@@ -21,6 +21,7 @@ const createTask = async (req, res) => {
     const task = await Task.create({
       title,
       lead,
+      leadId: leadId || undefined,
       dueDate,
       assignedTo: assignedTo.toLowerCase(),
       status: 'Pending'
@@ -32,7 +33,7 @@ const createTask = async (req, res) => {
   }
 };
 
-// 3. Update Task Status (STRICT: Only assigned user or admin can update status)
+// 3. Update Task Status (only the assigned user can update status)
 const updateTaskStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -46,9 +47,8 @@ const updateTaskStatus = async (req, res) => {
     // Strict Authorization check
     const currentUserEmail = (req.user?.email || '').toLowerCase();
     const isAssigned = task.assignedTo.toLowerCase() === currentUserEmail;
-    const isAdmin = req.user?.role === 'admin';
 
-    if (!isAssigned && !isAdmin) {
+    if (!isAssigned) {
       return res.status(403).json({
         success: false,
         message: `Forbidden: Only the assigned user (${task.assignedTo}) can update this task status.`

@@ -1,20 +1,33 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'Authentication required. No token provided.' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'Authentication required. No token provided.' });
   }
 
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey_12345');
-    req.user = decoded; // { userId, email, role }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id).select('name email role');
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: 'User no longer exists.' });
+    }
+
+    req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'Invalid or expired token.' });
   }
 };
 
