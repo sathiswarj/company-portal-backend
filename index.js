@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://minicrm-seven-olive.vercel.app',
+  'https://minicrm-theta-gules.vercel.app',
   ...(process.env.CLIENT_URL || '')
     .split(',')
     .map((origin) => origin.trim().replace(/\/+$/, ''))
